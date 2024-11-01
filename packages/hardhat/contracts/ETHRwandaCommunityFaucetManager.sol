@@ -13,6 +13,7 @@ error ExceedsMaxLocks();
 error LockAddressNotFound();
 error NotAdminForRole();
 error LockAlreadyAdded();
+error ETHTransferFailed();
 
 contract ETHRwandaCommunityFaucetManager is AccessControlDefaultAdminRules {
     // Maximum number of locks allowed
@@ -39,13 +40,21 @@ contract ETHRwandaCommunityFaucetManager is AccessControlDefaultAdminRules {
     event ETHRwWithdrawalRecorderRoleGranted(address indexed account);
     event ETHRwWithdrawalRecorderRoleRevoked(address indexed account);
     event ETHRwETHRwandaHackerOnboardVersionSet(uint256 version, address indexed onboardAddress);
+    event ETHRwETHTransfer(address indexed to, uint256 amount);
 
     constructor(address _manager)
         AccessControlDefaultAdminRules(0, _manager) // Delay of 0 seconds, admin is deployer
     {
         MANAGER = _manager;
     }
+    receive() external payable {}
 
+    function withdraw(address _to) external onlyRole(FAUCET_MANAGER_ROLE) {
+        (bool success, ) = _to.call{value: address(this).balance}("");
+        if (!success) revert ETHTransferFailed();
+        emit ETHRwETHTransfer(_to, address(this).balance);
+    }
+    
     /**
      * @dev Adds multiple lock addresses to the array, skipping already added addresses.
      * @param _lockAddresses The addresses of the locks to add. 
