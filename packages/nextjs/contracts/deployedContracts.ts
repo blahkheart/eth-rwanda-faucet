@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     ETHRwandaCommunityFaucetManager: {
-      address: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+      address: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
       abi: [
         {
           inputs: [
@@ -80,6 +80,11 @@ const deployedContracts = {
         },
         {
           inputs: [],
+          name: "LockAlreadyAdded",
+          type: "error",
+        },
+        {
+          inputs: [],
           name: "NotAdminForRole",
           type: "error",
         },
@@ -147,6 +152,96 @@ const deployedContracts = {
             },
           ],
           name: "DefaultAdminTransferScheduled",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "version",
+              type: "uint256",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "onboardAddress",
+              type: "address",
+            },
+          ],
+          name: "ETHRwETHRwandaHackerOnboardVersionSet",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "lockAddress",
+              type: "address",
+            },
+          ],
+          name: "ETHRwLockAdded",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "lockAddress",
+              type: "address",
+            },
+          ],
+          name: "ETHRwLockRemoved",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+          ],
+          name: "ETHRwWithdrawalRecorded",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "ETHRwWithdrawalRecorderRoleGranted",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "ETHRwWithdrawalRecorderRoleRevoked",
           type: "event",
         },
         {
@@ -226,6 +321,19 @@ const deployedContracts = {
         },
         {
           inputs: [],
+          name: "COOL_DOWN",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
           name: "DEFAULT_ADMIN_ROLE",
           outputs: [
             {
@@ -297,31 +405,25 @@ const deployedContracts = {
         },
         {
           inputs: [],
-          name: "WITHDRAWAL_RECORDER_ROLE",
+          name: "VERSION",
           outputs: [
             {
-              internalType: "bytes32",
+              internalType: "uint256",
               name: "",
-              type: "bytes32",
+              type: "uint256",
             },
           ],
           stateMutability: "view",
           type: "function",
         },
         {
-          inputs: [
-            {
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-          ],
-          name: "ableToWithdraw",
+          inputs: [],
+          name: "WITHDRAWAL_RECORDER_ROLE",
           outputs: [
             {
-              internalType: "bool",
+              internalType: "bytes32",
               name: "",
-              type: "bool",
+              type: "bytes32",
             },
           ],
           stateMutability: "view",
@@ -552,6 +654,25 @@ const deployedContracts = {
             },
           ],
           name: "hasValidKey",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "isAbleToWithdraw",
           outputs: [
             {
               internalType: "bool",

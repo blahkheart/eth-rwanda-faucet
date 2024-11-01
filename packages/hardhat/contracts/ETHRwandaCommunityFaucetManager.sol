@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol";
 import "./interfaces/IETHRwandaHackerOnboard.sol";
 
-interface IUnlockLock {
+interface IPublicLock {
     function getHasValidKey(address _user) external view returns (bool);
 }
 
@@ -19,6 +19,7 @@ contract ETHRwandaCommunityFaucetManager is AccessControlDefaultAdminRules {
     uint256 public constant MAX_LOCKS = 10;
     address public immutable MANAGER;
     uint256 public constant COOL_DOWN = 24 hours;
+    uint256 public constant VERSION = 1.0; 
 
     // Array of lock addresses
     address[] private lockAddresses;
@@ -31,11 +32,18 @@ contract ETHRwandaCommunityFaucetManager is AccessControlDefaultAdminRules {
     bytes32 public constant WITHDRAWAL_RECORDER_ROLE = keccak256("WITHDRAWAL_RECORDER_ROLE");
     bytes32 public constant FAUCET_MANAGER_ROLE = keccak256("FAUCET_MANAGER_ROLE");
 
+    // Event definitions
+    event ETHRwLockAdded(address indexed lockAddress);
+    event ETHRwLockRemoved(address indexed lockAddress);
+    event ETHRwWithdrawalRecorded(address indexed user, uint256 timestamp);
+    event ETHRwWithdrawalRecorderRoleGranted(address indexed account);
+    event ETHRwWithdrawalRecorderRoleRevoked(address indexed account);
+    event ETHRwETHRwandaHackerOnboardVersionSet(uint256 version, address indexed onboardAddress);
+
     constructor(address _manager)
         AccessControlDefaultAdminRules(0, _manager) // Delay of 0 seconds, admin is deployer
     {
         MANAGER = _manager;
-        grantRole(FAUCET_MANAGER_ROLE, _manager);
     }
 
     /**
@@ -47,6 +55,7 @@ contract ETHRwandaCommunityFaucetManager is AccessControlDefaultAdminRules {
         for (uint256 i = 0; i < _lockAddresses.length; i++) {
             if (!_isAddressAdded(_lockAddresses[i])) {
                 lockAddresses.push(_lockAddresses[i]);
+                emit ETHRwLockAdded(_lockAddresses[i]);
             }
         }
     }
@@ -57,6 +66,7 @@ contract ETHRwandaCommunityFaucetManager is AccessControlDefaultAdminRules {
 
     function setETHRwandaHackerOnboardAtVersion(uint256 _version, address _ethRwandaHackerOnboardAddress) external onlyRole(getRoleAdmin(FAUCET_MANAGER_ROLE)) {
         ETHRwandaHackerOnboardVersions[_version] = _ethRwandaHackerOnboardAddress;
+        emit ETHRwETHRwandaHackerOnboardVersionSet(_version, _ethRwandaHackerOnboardAddress);
     }
 
     /**
@@ -81,6 +91,7 @@ contract ETHRwandaCommunityFaucetManager is AccessControlDefaultAdminRules {
         if (lockAddresses.length == MAX_LOCKS) revert ExceedsMaxLocks();
         if(_isAddressAdded(_lockAddress)) revert LockAlreadyAdded();
         lockAddresses.push(_lockAddress);
+        emit ETHRwLockAdded(_lockAddress);
     }
 
     /**
@@ -94,6 +105,7 @@ contract ETHRwandaCommunityFaucetManager is AccessControlDefaultAdminRules {
         // Remove the lock address by swapping it with the last element and popping it
         lockAddresses[index] = lockAddresses[lockAddresses.length - 1]; 
         lockAddresses.pop();
+        emit ETHRwLockRemoved(_lockAddress);
     }
 
     /**
@@ -115,7 +127,7 @@ contract ETHRwandaCommunityFaucetManager is AccessControlDefaultAdminRules {
      * @param user The address of the user.
      * @return True if the user can withdraw, false otherwise.
      */
-    function ableToWithdraw(address user) public view returns (bool) {
+    function isAbleToWithdraw(address user) public view returns (bool) {
         return (block.timestamp - lastWithdrawal[user]) >  COOL_DOWN;
     }
 
@@ -126,7 +138,7 @@ contract ETHRwandaCommunityFaucetManager is AccessControlDefaultAdminRules {
      */
     function hasValidKey(address user) public view returns (bool) {
         for (uint256 i = 0; i < lockAddresses.length; i++) {
-            IUnlockLock lock = IUnlockLock(lockAddresses[i]);
+            IPublicLock lock = IPublicLock(lockAddresses[i]);
             if (lock.getHasValidKey(user)) {
                 return true;
             }
@@ -141,6 +153,7 @@ contract ETHRwandaCommunityFaucetManager is AccessControlDefaultAdminRules {
      */
     function recordWithdrawal(address user) external onlyRole(WITHDRAWAL_RECORDER_ROLE) {
         lastWithdrawal[user] = block.timestamp;
+        emit ETHRwWithdrawalRecorded(user, block.timestamp);
     }
 
     /**
@@ -151,6 +164,7 @@ contract ETHRwandaCommunityFaucetManager is AccessControlDefaultAdminRules {
     function grantWithdrawalRecorderRole(address account) external {
         if (!hasRole(getRoleAdmin(WITHDRAWAL_RECORDER_ROLE), msg.sender)) revert NotAdminForRole();
         grantRole(WITHDRAWAL_RECORDER_ROLE, account);
+        emit ETHRwWithdrawalRecorderRoleGranted(account);
     }
 
     /**
@@ -161,6 +175,7 @@ contract ETHRwandaCommunityFaucetManager is AccessControlDefaultAdminRules {
     function revokeWithdrawalRecorderRole(address account) external {
         if (!hasRole(getRoleAdmin(WITHDRAWAL_RECORDER_ROLE), msg.sender)) revert NotAdminForRole();
         revokeRole(WITHDRAWAL_RECORDER_ROLE, account);
+        emit ETHRwWithdrawalRecorderRoleRevoked(account);
     }
 
     /**
