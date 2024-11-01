@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import type { NextPage } from "next";
+import { arbitrumSepolia, baseSepolia, sepolia } from "viem/chains";
 import { useAccount } from "wagmi";
+import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
+import { CustomSelect } from "~~/components/ui/CustomSelect";
 
 const Home: NextPage = () => {
   const { address: connectedAddress, isConnected } = useAccount();
@@ -10,7 +13,7 @@ const Home: NextPage = () => {
   const [amount, setAmount] = useState("");
   const [tokenAddress, setTokenAddress] = useState("");
   const [gateTokenAddress, setGateTokenAddress] = useState("");
-  const isOwner = true;
+  const isOwner = false;
   // Placeholder for blockchain interactions
   const requestTokens = async () => {
     console.log("Tokens requested");
@@ -23,6 +26,13 @@ const Home: NextPage = () => {
   const setTokenGate = async (tokenAddress: string) => {
     console.log("Token gate set", tokenAddress);
   };
+
+  const networkOptions = [
+    { value: "", label: "Choose a network" },
+    { value: sepolia.id.toString(), label: sepolia.name },
+    { value: arbitrumSepolia.id.toString(), label: arbitrumSepolia.name },
+    { value: baseSepolia.id.toString(), label: baseSepolia.name },
+  ];
 
   return (
     <div className="min-h-screen bg-[#006D77] flex items-center justify-center p-4 font-['Montserrat',sans-serif]">
@@ -59,17 +69,7 @@ const Home: NextPage = () => {
                 <label htmlFor="network" className="block text-sm font-medium">
                   Select Network
                 </label>
-                <select
-                  id="network"
-                  className="w-full h-12 bg-white/20 rounded-md px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#83C5BE]"
-                  value={network}
-                  onChange={e => setNetwork(e.target.value)}
-                >
-                  <option value="">Choose a network</option>
-                  <option value="ethereum">Ethereum</option>
-                  <option value="goerli">Goerli</option>
-                  <option value="sepolia">Sepolia</option>
-                </select>
+                <CustomSelect options={networkOptions} selected={network} onChange={setNetwork} />
               </div>
               <button
                 className="w-full h-12 bg-[#83C5BE] hover:bg-[#006D77] text-[#006D77] hover:text-white transition-colors rounded-md font-semibold flex items-center justify-center"
@@ -93,9 +93,9 @@ const Home: NextPage = () => {
               </button>
             </>
           ) : (
-            <button className="w-full h-12 bg-[#83C5BE] hover:bg-[#006D77] text-[#006D77] hover:text-white transition-colors rounded-md font-semibold">
-              Connect Wallet
-            </button>
+            <div className="flex justify-center">
+              <RainbowKitCustomConnectButton />
+            </div>
           )}
 
           {isOwner && (
