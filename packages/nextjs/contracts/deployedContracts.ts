@@ -7,13 +7,28 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     ETHRwandaCommunityFaucetManager: {
-      address: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+      address: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
       abi: [
         {
           inputs: [
             {
               internalType: "address",
               name: "_manager",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "_version",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "_ethRwandaHackerOnboardAddress",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_faucetWalletAddress",
               type: "address",
             },
           ],
@@ -70,6 +85,16 @@ const deployedContracts = {
         },
         {
           inputs: [],
+          name: "ETHRwHackerOnboardNotFound",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "ETHTransferFailed",
+          type: "error",
+        },
+        {
+          inputs: [],
           name: "ExceedsMaxLocks",
           type: "error",
         },
@@ -85,7 +110,17 @@ const deployedContracts = {
         },
         {
           inputs: [],
-          name: "NotAdminForRole",
+          name: "NotFaucetAdmin",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "NotFaucetManager",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "NotWithdrawalRecorder",
           type: "error",
         },
         {
@@ -171,6 +206,25 @@ const deployedContracts = {
             },
           ],
           name: "ETHRwETHRwandaHackerOnboardVersionSet",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "to",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+          ],
+          name: "ETHRwETHTransfer",
           type: "event",
         },
         {
@@ -535,6 +589,38 @@ const deployedContracts = {
           type: "function",
         },
         {
+          inputs: [],
+          name: "faucetWalletAddress",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "getFirstValidKeyLockAddress",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
           inputs: [
             {
               internalType: "uint256",
@@ -686,12 +772,50 @@ const deployedContracts = {
         {
           inputs: [
             {
+              internalType: "uint256",
+              name: "tokenId",
+              type: "uint256",
+            },
+          ],
+          name: "isTokenIdAbleToWithdraw",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
               internalType: "address",
               name: "",
               type: "address",
             },
           ],
           name: "lastWithdrawal",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          name: "lastWithdrawalByTokenId",
           outputs: [
             {
               internalType: "uint256",
@@ -755,8 +879,13 @@ const deployedContracts = {
           inputs: [
             {
               internalType: "address",
-              name: "user",
+              name: "_user",
               type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "_tokenId",
+              type: "uint256",
             },
           ],
           name: "recordWithdrawal",
@@ -837,6 +966,19 @@ const deployedContracts = {
           inputs: [
             {
               internalType: "uint256",
+              name: "_newCoolDown",
+              type: "uint256",
+            },
+          ],
+          name: "setCoolDown",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
               name: "_version",
               type: "uint256",
             },
@@ -847,6 +989,19 @@ const deployedContracts = {
             },
           ],
           name: "setETHRwandaHackerOnboardAtVersion",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_newFaucetWalletAddress",
+              type: "address",
+            },
+          ],
+          name: "setFaucetWalletAddress",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",
@@ -870,26 +1025,61 @@ const deployedContracts = {
           stateMutability: "view",
           type: "function",
         },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_to",
+              type: "address",
+            },
+          ],
+          name: "withdraw",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          stateMutability: "payable",
+          type: "receive",
+        },
       ],
       inheritedFunctions: {
-        DEFAULT_ADMIN_ROLE: "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
-        acceptDefaultAdminTransfer: "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
-        beginDefaultAdminTransfer: "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
-        cancelDefaultAdminTransfer: "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
-        changeDefaultAdminDelay: "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
-        defaultAdmin: "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
-        defaultAdminDelay: "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
-        defaultAdminDelayIncreaseWait: "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
-        getRoleAdmin: "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
-        grantRole: "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
-        hasRole: "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
-        owner: "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
-        pendingDefaultAdmin: "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
-        pendingDefaultAdminDelay: "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
-        renounceRole: "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
-        revokeRole: "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
-        rollbackDefaultAdminDelay: "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
-        supportsInterface: "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        DEFAULT_ADMIN_ROLE:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        acceptDefaultAdminTransfer:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        beginDefaultAdminTransfer:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        cancelDefaultAdminTransfer:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        changeDefaultAdminDelay:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        defaultAdmin:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        defaultAdminDelay:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        defaultAdminDelayIncreaseWait:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        getRoleAdmin:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        grantRole:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        hasRole:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        owner:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        pendingDefaultAdmin:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        pendingDefaultAdminDelay:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        renounceRole:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        revokeRole:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        rollbackDefaultAdminDelay:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        supportsInterface:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
       },
     },
   },

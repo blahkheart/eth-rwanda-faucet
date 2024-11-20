@@ -6,27 +6,34 @@ import "./interfaces/IETHRwandaHackerOnboard.sol";
 
 interface IPublicLock {
     function getHasValidKey(address _user) external view returns (bool);
+    function tokenOfOwnerByIndex(address _user, uint256 _index) external view returns (uint256);
 }
 
 // Custom error definitions
 error ExceedsMaxLocks();
 error LockAddressNotFound();
+error NoValidKeyForUserFound();
 error NotAdminForRole();
 error LockAlreadyAdded();
 error ETHTransferFailed();
-
+error ETHRwHackerOnboardNotFound(); 
+error NotFaucetAdmin();
+error NotFaucetManager();
+error NotWithdrawalRecorder();
 contract ETHRwandaCommunityFaucetManager is AccessControlDefaultAdminRules {
     // Maximum number of locks allowed
     uint256 public constant MAX_LOCKS = 10;
     address public immutable MANAGER;
-    uint256 public constant COOL_DOWN = 24 hours;
-    uint256 public constant VERSION = 1.0; 
+    uint256 public COOL_DOWN = 24 hours;
+    uint256 public constant VERSION = 1; 
 
     // Array of lock addresses
     address[] private lockAddresses;
+    address public faucetWalletAddress;
 
     // Mapping to store the timestamp of the last withdrawal for each user
     mapping(address => uint256) public lastWithdrawal;
+    mapping(uint256 => uint256) public lastWithdrawalByTokenId;
     mapping(uint256 => address) public ETHRwandaHackerOnboardVersions;
 
     // Define a role identifier for the withdrawal recorder role
@@ -42,24 +49,48 @@ contract ETHRwandaCommunityFaucetManager is AccessControlDefaultAdminRules {
     event ETHRwETHRwandaHackerOnboardVersionSet(uint256 version, address indexed onboardAddress);
     event ETHRwETHTransfer(address indexed to, uint256 amount);
 
-    constructor(address _manager)
+    constructor(address _manager, uint256 _version, address _ethRwandaHackerOnboardAddress, address _faucetWalletAddress)
         AccessControlDefaultAdminRules(0, _manager) // Delay of 0 seconds, admin is deployer
     {
         MANAGER = _manager;
+        ETHRwandaHackerOnboardVersions[_version] = _ethRwandaHackerOnboardAddress;
+        faucetWalletAddress = _faucetWalletAddress;
+    }
+
+    modifier onlyFaucetAdmin() {
+        if (!hasRole(getRoleAdmin(DEFAULT_ADMIN_ROLE), msg.sender)) revert NotFaucetAdmin();
+        _;
+    }
+
+    modifier onlyFaucetManager() {
+        if (!hasRole(getRoleAdmin(FAUCET_MANAGER_ROLE), msg.sender)) revert NotFaucetManager();
+        _;
+    }
+
+    modifier onlyWithdrawalRecorder() {
+        if (!hasRole(getRoleAdmin(WITHDRAWAL_RECORDER_ROLE), msg.sender)) revert NotWithdrawalRecorder();
+        _;
     }
     receive() external payable {}
 
-    function withdraw(address _to) external onlyRole(FAUCET_MANAGER_ROLE) {
+    function withdraw(address _to) external onlyFaucetManager {
         (bool success, ) = _to.call{value: address(this).balance}("");
         if (!success) revert ETHTransferFailed();
         emit ETHRwETHTransfer(_to, address(this).balance);
     }
-    
+    function setFaucetWalletAddress(address _newFaucetWalletAddress) external onlyFaucetManager {
+        faucetWalletAddress = _newFaucetWalletAddress;
+    }
+
+    function setCoolDown(uint256 _newCoolDown) external onlyFaucetAdmin {
+        COOL_DOWN = _newCoolDown;
+    }
+
     /**
      * @dev Adds multiple lock addresses to the array, skipping already added addresses.
      * @param _lockAddresses The addresses of the locks to add. 
      */
-    function batchAddLocks(address[] calldata _lockAddresses) external onlyRole(getRoleAdmin(FAUCET_MANAGER_ROLE)) {
+    function batchAddLocks(address[] calldata _lockAddresses) external onlyFaucetManager {
         if (lockAddresses.length + _lockAddresses.length > MAX_LOCKS) revert ExceedsMaxLocks();
         for (uint256 i = 0; i < _lockAddresses.length; i++) {
             if (!_isAddressAdded(_lockAddresses[i])) {
@@ -69,11 +100,12 @@ contract ETHRwandaCommunityFaucetManager is AccessControlDefaultAdminRules {
         }
     }
 
-    function getIsHackerInitialized(uint256 _version, address _hackerAddress) public view returns (bool isInitialized_){
-       isInitialized_ = IETHRwandaHackerOnboard(ETHRwandaHackerOnboardVersions[_version]).getIsHackerInitialized(_hackerAddress);
+    function getIsHackerInitialized(uint256 _version, address _hackerAddress) public view returns (bool isInitialized_) {
+        if (ETHRwandaHackerOnboardVersions[_version] == address(0)) revert ETHRwHackerOnboardNotFound();
+        isInitialized_ = IETHRwandaHackerOnboard(ETHRwandaHackerOnboardVersions[_version]).getIsHackerInitialized(_hackerAddress);
     }
 
-    function setETHRwandaHackerOnboardAtVersion(uint256 _version, address _ethRwandaHackerOnboardAddress) external onlyRole(getRoleAdmin(FAUCET_MANAGER_ROLE)) {
+    function setETHRwandaHackerOnboardAtVersion(uint256 _version, address _ethRwandaHackerOnboardAddress) external onlyFaucetManager {
         ETHRwandaHackerOnboardVersions[_version] = _ethRwandaHackerOnboardAddress;
         emit ETHRwETHRwandaHackerOnboardVersionSet(_version, _ethRwandaHackerOnboardAddress);
     }
@@ -96,7 +128,7 @@ contract ETHRwandaCommunityFaucetManager is AccessControlDefaultAdminRules {
      * @dev Adds a single lock address to the array.
      * @param _lockAddress The address of the lock to add.
      */
-    function addLock(address _lockAddress) external onlyRole(getRoleAdmin(DEFAULT_ADMIN_ROLE)) {
+    function addLock(address _lockAddress) external onlyFaucetManager {
         if (lockAddresses.length == MAX_LOCKS) revert ExceedsMaxLocks();
         if(_isAddressAdded(_lockAddress)) revert LockAlreadyAdded();
         lockAddresses.push(_lockAddress);
@@ -107,7 +139,7 @@ contract ETHRwandaCommunityFaucetManager is AccessControlDefaultAdminRules {
      * @dev Removes a single lock address from the array.
      * @param _lockAddress The address of the lock to remove.
      */
-    function removeLock(address _lockAddress) external onlyRole(getRoleAdmin(FAUCET_MANAGER_ROLE)) {
+    function removeLock(address _lockAddress) external onlyFaucetManager {
         uint256 index = _findLockIndex(_lockAddress);
         if (index >= lockAddresses.length) revert LockAddressNotFound();
 
@@ -140,12 +172,17 @@ contract ETHRwandaCommunityFaucetManager is AccessControlDefaultAdminRules {
         return (block.timestamp - lastWithdrawal[user]) >  COOL_DOWN;
     }
 
+    function isTokenIdAbleToWithdraw(uint256 tokenId) public view returns (bool) {
+        return (block.timestamp - lastWithdrawalByTokenId[tokenId]) >  COOL_DOWN;
+    }
+
     /**
      * @dev Checks if a user has a valid key to any of the locks.
      * @param user The address of the user.
      * @return True if the user has a valid key, false otherwise.
      */
     function hasValidKey(address user) public view returns (bool) {
+        if (lockAddresses.length == 0) return false;
         for (uint256 i = 0; i < lockAddresses.length; i++) {
             IPublicLock lock = IPublicLock(lockAddresses[i]);
             if (lock.getHasValidKey(user)) {
@@ -156,13 +193,27 @@ contract ETHRwandaCommunityFaucetManager is AccessControlDefaultAdminRules {
     }
 
     /**
-     * @dev Records the withdrawal by updating the lastWithdrawal timestamp.
-     *      Can be called by any address with the WITHDRAWAL_RECORDER_ROLE.
+     * @dev Returns the address of the first lock for which the user has a valid key.
      * @param user The address of the user.
+     * @return The address of the first valid lock, or address(0) if none found.
      */
-    function recordWithdrawal(address user) external onlyRole(WITHDRAWAL_RECORDER_ROLE) {
-        lastWithdrawal[user] = block.timestamp;
-        emit ETHRwWithdrawalRecorded(user, block.timestamp);
+    function getFirstValidKeyLockAddress(address user) public view returns (address) {
+        for (uint256 i = 0; i < lockAddresses.length; i++) {
+            if (IPublicLock(lockAddresses[i]).getHasValidKey(user)) return lockAddresses[i]; 
+        }
+        return address(0); // Return address(0) if no valid lock is found
+    }
+
+    /**
+     * @dev Records the withdrawal by updating the lastWithdrawal timestamp.
+     * Can be called by any address with the WITHDRAWAL_RECORDER_ROLE.
+     * @param _user The address of the user.
+     * @param _tokenId The token ID/ key of the lock.
+     */
+    function recordWithdrawal(address _user, uint256 _tokenId) external onlyWithdrawalRecorder {
+        lastWithdrawal[_user] = block.timestamp;
+        lastWithdrawalByTokenId[_tokenId] = block.timestamp;
+        emit ETHRwWithdrawalRecorded(_user, block.timestamp);
     }
 
     /**
@@ -170,8 +221,7 @@ contract ETHRwandaCommunityFaucetManager is AccessControlDefaultAdminRules {
      *      Can only be called by addresses with the admin role.
      * @param account The address to grant the role to.
      */
-    function grantWithdrawalRecorderRole(address account) external {
-        if (!hasRole(getRoleAdmin(WITHDRAWAL_RECORDER_ROLE), msg.sender)) revert NotAdminForRole();
+    function grantWithdrawalRecorderRole(address account) external onlyFaucetManager {
         grantRole(WITHDRAWAL_RECORDER_ROLE, account);
         emit ETHRwWithdrawalRecorderRoleGranted(account);
     }
@@ -181,8 +231,7 @@ contract ETHRwandaCommunityFaucetManager is AccessControlDefaultAdminRules {
      *      Can only be called by addresses with the admin role.
      * @param account The address to revoke the role from.
      */
-    function revokeWithdrawalRecorderRole(address account) external {
-        if (!hasRole(getRoleAdmin(WITHDRAWAL_RECORDER_ROLE), msg.sender)) revert NotAdminForRole();
+    function revokeWithdrawalRecorderRole(address account) external onlyFaucetManager {
         revokeRole(WITHDRAWAL_RECORDER_ROLE, account);
         emit ETHRwWithdrawalRecorderRoleRevoked(account);
     }

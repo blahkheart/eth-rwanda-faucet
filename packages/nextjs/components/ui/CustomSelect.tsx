@@ -7,7 +7,7 @@ export const CustomSelect = ({
 }: {
   options: { value: string; label: string }[];
   selected: string;
-  onChange: (value: string) => void;
+  onChange: (value: any) => void;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
