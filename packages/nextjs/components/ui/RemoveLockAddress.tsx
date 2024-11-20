@@ -36,10 +36,10 @@ export default function RemoveLockAddress() {
 
   return (
     <div className="bg-white/5 rounded-lg p-4">
-      <h4 className="text-xl font-semibold mb-4">Remove Lock Addresses</h4>
-      <div className="space-y-4">
+      <h4 className=" text-sm font-medium mb-4">Remove Lock Addresses</h4>
+      <div className="space-y-4 text-white">
         {lockAddresses.length === 0 ? (
-          <p className="text-gray-500">No lock addresses available.</p>
+          <p className="text-gray-100 font-bold ">No lock addresses available...</p>
         ) : (
           <>
             <div>

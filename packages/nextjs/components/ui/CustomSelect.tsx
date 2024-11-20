@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export const CustomSelect = ({
   options,
@@ -10,14 +10,28 @@ export const CustomSelect = ({
   onChange: (value: any) => void;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const selectRef = useRef<HTMLDivElement | null>(null);
 
-  const handleSelect = (value: string) => {
+  const handleSelect = (value: any) => {
     onChange(value);
     setIsOpen(false);
   };
 
+  const handleClickOutside = (event: MouseEvent) => {
+    if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
+      setIsOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="relative">
+    <div className="relative" ref={selectRef}>
       <button
         className="w-full h-12 bg-white/20 text-white text-left rounded-md px-3 py-2 focus:outline-none"
         onClick={() => setIsOpen(!isOpen)}
@@ -40,3 +54,4 @@ export const CustomSelect = ({
     </div>
   );
 };
+
