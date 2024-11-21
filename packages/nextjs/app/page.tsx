@@ -85,7 +85,7 @@ const Home: NextPage = () => {
         @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap");
       `}</style>
       {/* <NFTDisplay /> */}
-        <FaucetInfo />
+      <FaucetInfo />
       <div className="w-full max-w-2xl bg-white/10 backdrop-blur-md border-none text-white rounded-lg shadow-xl p-8">
         <div className="text-center mb-8">
           <h1 className="flex flex-col lg:flex-row items-center justify-center gap-2 mb-2 lg:mr-6">

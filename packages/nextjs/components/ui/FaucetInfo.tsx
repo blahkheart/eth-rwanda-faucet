@@ -1,11 +1,17 @@
 // import { LevelInfoModal } from "./LevelInfoModal";
 import { AlertCircle } from "lucide-react";
+import { useScreenSize } from "~~/hooks/scaffold-eth";
 
 export function FaucetInfo() {
+  const screenSize = useScreenSize();
+  const infoMargin = screenSize === "lg" ? "-mt-20" : "mt-12";
+
   return (
-    <div className="max-w-3xl mx-auto mb-8 rounded-xl bg-teal-900/40 backdrop-blur-sm border border-teal-700/50 -mt-36">
+    <div
+      className={`max-w-3xl mx-auto mb-8 rounded-xl bg-teal-900/40 backdrop-blur-sm border border-teal-700/50 ${infoMargin}`}
+    >
       <div className="p-6">
-        <div className="flex items-start gap-4">
+        <div className="flex flex-col md:flex-row items-start gap-4">
           <div className="mt-1">
             <AlertCircle className="h-5 w-5 text-teal-200" />
           </div>
