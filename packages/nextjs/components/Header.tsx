@@ -4,7 +4,7 @@ import React, { useCallback, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bars3Icon, BugAntIcon } from "@heroicons/react/24/outline";
+import { Bars3Icon } from "@heroicons/react/24/outline";
 import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { useOutsideClick } from "~~/hooks/scaffold-eth";
 
@@ -40,7 +40,7 @@ export const HeaderMenuLinks = () => {
               href={href}
               passHref
               className={`${
-                isActive ? "bg-black/30" : ""
+                isActive ? "bg-black/30 text-white" : ""
               } hover:bg-secondary hover:shadow-md focus:!bg-secondary active:!text-neutral py-1.5 px-3 text-sm rounded-full gap-2 grid grid-flow-col`}
             >
               {icon}
@@ -59,6 +59,9 @@ export const HeaderMenuLinks = () => {
 export const Header = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const burgerMenuRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+  const isGalleryActive = pathname === "/gallery";
+
   useOutsideClick(
     burgerMenuRef,
     useCallback(() => setIsDrawerOpen(false), []),
@@ -70,7 +73,9 @@ export const Header = () => {
         <div className="lg:hidden dropdown" ref={burgerMenuRef}>
           <label
             tabIndex={0}
-            className={`ml-1 btn btn-ghost ${isDrawerOpen ? "hover:bg-secondary text-black/50" : "hover:bg-transparent"}`}
+            className={`ml-1 btn btn-ghost ${
+              isDrawerOpen ? "hover:bg-secondary text-black/50" : "hover:bg-transparent"
+            }`}
             onClick={() => {
               setIsDrawerOpen(prevIsOpenState => !prevIsOpenState);
             }}
@@ -99,7 +104,10 @@ export const Header = () => {
         </Link>
         <ul className="hidden lg:flex lg:flex-nowrap menu menu-horizontal font-bold">
           <li className="flex items-center">
-            <Link href="/gallery" className="flex items-center text-base">
+            <Link
+              href="/gallery"
+              className={`flex items-center text-base focus:text-white ${isGalleryActive ? "text-white" : ""}`}
+            >
               <Image alt="Gallery icon" width={30} height={30} src={"/gallery-icon.png"} />
               Events Gallery
             </Link>

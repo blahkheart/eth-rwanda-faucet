@@ -1,12 +1,14 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const CustomSelect = ({
   options,
   selected,
+  placeholder = "Choose a network",
   onChange,
 }: {
   options: { value: string; label: string }[];
   selected: string;
+  placeholder?: string;
   onChange: (value: any) => void;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -36,7 +38,7 @@ export const CustomSelect = ({
         className="w-full h-12 bg-white/20 text-white text-left rounded-md px-3 py-2 focus:outline-none"
         onClick={() => setIsOpen(!isOpen)}
       >
-        {options.find(option => option.value === selected)?.label || "Choose a network"}
+        {options.find(option => option.value === selected)?.label || placeholder}
       </button>
       {isOpen && (
         <ul className="absolute w-full bg-gray-800 text-white rounded-md mt-1 shadow-lg z-10">
@@ -54,4 +56,3 @@ export const CustomSelect = ({
     </div>
   );
 };
-

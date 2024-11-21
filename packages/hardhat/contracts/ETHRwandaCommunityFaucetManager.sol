@@ -20,12 +20,14 @@ error ETHRwHackerOnboardNotFound();
 error NotFaucetAdmin();
 error NotFaucetManager();
 error NotWithdrawalRecorder();
+
 contract ETHRwandaCommunityFaucetManager is AccessControlDefaultAdminRules {
     // Maximum number of locks allowed
     uint256 public constant MAX_LOCKS = 10;
     address public immutable MANAGER;
     uint256 public COOL_DOWN = 24 hours;
     uint256 public constant VERSION = 1; 
+    uint256 public totalRequests = 0;
 
     // Array of lock addresses
     address[] private lockAddresses;
@@ -213,6 +215,7 @@ contract ETHRwandaCommunityFaucetManager is AccessControlDefaultAdminRules {
     function recordWithdrawal(address _user, uint256 _tokenId) external onlyWithdrawalRecorder {
         lastWithdrawal[_user] = block.timestamp;
         lastWithdrawalByTokenId[_tokenId] = block.timestamp;
+        totalRequests++;
         emit ETHRwWithdrawalRecorded(_user, block.timestamp);
     }
 

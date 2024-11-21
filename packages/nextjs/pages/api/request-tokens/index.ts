@@ -74,10 +74,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Check faucet wallet balance
     const faucetBalance = await provider.getBalance(faucetWallet.address);
-    if (faucetBalance < ethers.parseEther(ethAmount)) {
+    if (faucetBalance <= ethers.parseEther(ethAmount)) {
       return res.status(400).json({ error: "Faucet balance low, try again later or try another network" });
     }
 
+    const recordWithdrawalTx = await faucetManagerContract.recordWithdrawal(userAddress, tokenId);
+    const receipt = await recordWithdrawalTx.wait();
+    if (receipt.status !== 1) {
+      return res.status(400).json({ error: "Failed to record ETH request" });
+    }
     // Transfer testnet ether to the address
     const tx = await faucetWallet.sendTransaction({
       to: userAddress,
@@ -86,9 +91,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     await tx.wait();
 
     // Record the withdrawal
-    await faucetManagerContract.recordWithdrawal(userAddress, tokenId);
 
-    res.status(200).json({ message: "Withdrawal successful", transactionHash: tx.hash, success: true });
+    res.status(200).json({
+      message: `Successfully sent ${ethAmount} ETH to ${userAddress} with transaction hash: ${tx.hash}`,
+      transactionHash: tx.hash,
+      success: true,
+    });
   } catch (error) {
     console.error("Error processing request:", error);
     res.status(500).json({ error: "Internal server error" });

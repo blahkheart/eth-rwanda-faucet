@@ -3,7 +3,6 @@ import { CustomSelect } from "~~/components/ui/CustomSelect";
 import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import { notification } from "~~/utils/scaffold-eth";
 
-
 export default function RemoveLockAddress() {
   const [lockAddresses, setLockAddresses] = useState<string[]>([]);
   const [selectedLockAddress, setSelectedLockAddress] = useState<string>("");
@@ -23,8 +22,8 @@ export default function RemoveLockAddress() {
     try {
       await removeLockAddress({
         args: [selectedLockAddress],
-        functionName: "removeLock"
-       });
+        functionName: "removeLock",
+      });
       notification.success("Lock address removed successfully");
       setLockAddresses(lockAddresses.filter((address: string) => address !== selectedLockAddress));
     } catch (error) {
@@ -46,6 +45,7 @@ export default function RemoveLockAddress() {
               <CustomSelect
                 options={lockAddresses.map(address => ({ value: address, label: address }))}
                 selected={selectedLockAddress}
+                placeholder="Select lock address"
                 onChange={setSelectedLockAddress}
               />
             </div>

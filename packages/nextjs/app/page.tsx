@@ -21,7 +21,6 @@ const Home: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const screenSize = useScreenSize();
   const addressFormat = screenSize === "lg" ? "long" : "short";
-  const addressSize = screenSize === "lg" ? "lg" : "sm";
   
   const { data: ownerAddress, isLoading: isOwnerAddressLoading } = useScaffoldReadContract({
     contractName: "ETHRwandaCommunityFaucetManager",
@@ -99,7 +98,7 @@ const Home: NextPage = () => {
             <>
               <div className="bg-white/20 p-4 rounded-lg text-center flex flex-col items-center">
                 <h3 className="text-sm mb-2 text-gray-100 font-thin">Faucet Wallet Address</h3>
-                <Address address={faucetWalletAddress} size={addressSize} format={addressFormat} />
+                <Address address={faucetWalletAddress} size={"sm"} format={addressFormat} />
               </div>
               <div className="space-y-2">
                 <label htmlFor="network" className="block text-sm font-medium">

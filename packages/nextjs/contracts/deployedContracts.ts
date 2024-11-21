@@ -1083,6 +1083,1084 @@ const deployedContracts = {
       },
     },
   },
+  84532: {
+    ETHRwandaCommunityFaucetManager: {
+      address: "0x024235436639d5e35bFeCe8b69cC8271122ab9b4",
+      abi: [
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_manager",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "_version",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "_ethRwandaHackerOnboardAddress",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_faucetWalletAddress",
+              type: "address",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "constructor",
+        },
+        {
+          inputs: [],
+          name: "AccessControlBadConfirmation",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint48",
+              name: "schedule",
+              type: "uint48",
+            },
+          ],
+          name: "AccessControlEnforcedDefaultAdminDelay",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "AccessControlEnforcedDefaultAdminRules",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "defaultAdmin",
+              type: "address",
+            },
+          ],
+          name: "AccessControlInvalidDefaultAdmin",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+            {
+              internalType: "bytes32",
+              name: "neededRole",
+              type: "bytes32",
+            },
+          ],
+          name: "AccessControlUnauthorizedAccount",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "ETHRwHackerOnboardNotFound",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "ETHTransferFailed",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "ExceedsMaxLocks",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "LockAddressNotFound",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "LockAlreadyAdded",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "NotFaucetAdmin",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "NotFaucetManager",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "NotWithdrawalRecorder",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint8",
+              name: "bits",
+              type: "uint8",
+            },
+            {
+              internalType: "uint256",
+              name: "value",
+              type: "uint256",
+            },
+          ],
+          name: "SafeCastOverflowedUintDowncast",
+          type: "error",
+        },
+        {
+          anonymous: false,
+          inputs: [],
+          name: "DefaultAdminDelayChangeCanceled",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "uint48",
+              name: "newDelay",
+              type: "uint48",
+            },
+            {
+              indexed: false,
+              internalType: "uint48",
+              name: "effectSchedule",
+              type: "uint48",
+            },
+          ],
+          name: "DefaultAdminDelayChangeScheduled",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [],
+          name: "DefaultAdminTransferCanceled",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "newAdmin",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint48",
+              name: "acceptSchedule",
+              type: "uint48",
+            },
+          ],
+          name: "DefaultAdminTransferScheduled",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "version",
+              type: "uint256",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "onboardAddress",
+              type: "address",
+            },
+          ],
+          name: "ETHRwETHRwandaHackerOnboardVersionSet",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "to",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+          ],
+          name: "ETHRwETHTransfer",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "lockAddress",
+              type: "address",
+            },
+          ],
+          name: "ETHRwLockAdded",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "lockAddress",
+              type: "address",
+            },
+          ],
+          name: "ETHRwLockRemoved",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+          ],
+          name: "ETHRwWithdrawalRecorded",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "ETHRwWithdrawalRecorderRoleGranted",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "ETHRwWithdrawalRecorderRoleRevoked",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "bytes32",
+              name: "role",
+              type: "bytes32",
+            },
+            {
+              indexed: true,
+              internalType: "bytes32",
+              name: "previousAdminRole",
+              type: "bytes32",
+            },
+            {
+              indexed: true,
+              internalType: "bytes32",
+              name: "newAdminRole",
+              type: "bytes32",
+            },
+          ],
+          name: "RoleAdminChanged",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "bytes32",
+              name: "role",
+              type: "bytes32",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "sender",
+              type: "address",
+            },
+          ],
+          name: "RoleGranted",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "bytes32",
+              name: "role",
+              type: "bytes32",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "sender",
+              type: "address",
+            },
+          ],
+          name: "RoleRevoked",
+          type: "event",
+        },
+        {
+          inputs: [],
+          name: "COOL_DOWN",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "DEFAULT_ADMIN_ROLE",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          name: "ETHRwandaHackerOnboardVersions",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "FAUCET_MANAGER_ROLE",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "MANAGER",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "MAX_LOCKS",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "VERSION",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "WITHDRAWAL_RECORDER_ROLE",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "acceptDefaultAdminTransfer",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_lockAddress",
+              type: "address",
+            },
+          ],
+          name: "addLock",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address[]",
+              name: "_lockAddresses",
+              type: "address[]",
+            },
+          ],
+          name: "batchAddLocks",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "newAdmin",
+              type: "address",
+            },
+          ],
+          name: "beginDefaultAdminTransfer",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "cancelDefaultAdminTransfer",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint48",
+              name: "newDelay",
+              type: "uint48",
+            },
+          ],
+          name: "changeDefaultAdminDelay",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "defaultAdmin",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "defaultAdminDelay",
+          outputs: [
+            {
+              internalType: "uint48",
+              name: "",
+              type: "uint48",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "defaultAdminDelayIncreaseWait",
+          outputs: [
+            {
+              internalType: "uint48",
+              name: "",
+              type: "uint48",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "faucetWalletAddress",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "getFirstValidKeyLockAddress",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_version",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "_hackerAddress",
+              type: "address",
+            },
+          ],
+          name: "getIsHackerInitialized",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "isInitialized_",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "getLockAddresses",
+          outputs: [
+            {
+              internalType: "address[]",
+              name: "",
+              type: "address[]",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "role",
+              type: "bytes32",
+            },
+          ],
+          name: "getRoleAdmin",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "role",
+              type: "bytes32",
+            },
+            {
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "grantRole",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "grantWithdrawalRecorderRole",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "role",
+              type: "bytes32",
+            },
+            {
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "hasRole",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "hasValidKey",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "isAbleToWithdraw",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "tokenId",
+              type: "uint256",
+            },
+          ],
+          name: "isTokenIdAbleToWithdraw",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "lastWithdrawal",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          name: "lastWithdrawalByTokenId",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "owner",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "pendingDefaultAdmin",
+          outputs: [
+            {
+              internalType: "address",
+              name: "newAdmin",
+              type: "address",
+            },
+            {
+              internalType: "uint48",
+              name: "schedule",
+              type: "uint48",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "pendingDefaultAdminDelay",
+          outputs: [
+            {
+              internalType: "uint48",
+              name: "newDelay",
+              type: "uint48",
+            },
+            {
+              internalType: "uint48",
+              name: "schedule",
+              type: "uint48",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "_tokenId",
+              type: "uint256",
+            },
+          ],
+          name: "recordWithdrawal",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_lockAddress",
+              type: "address",
+            },
+          ],
+          name: "removeLock",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "role",
+              type: "bytes32",
+            },
+            {
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "renounceRole",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "role",
+              type: "bytes32",
+            },
+            {
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "revokeRole",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "revokeWithdrawalRecorderRole",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "rollbackDefaultAdminDelay",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_newCoolDown",
+              type: "uint256",
+            },
+          ],
+          name: "setCoolDown",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_version",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "_ethRwandaHackerOnboardAddress",
+              type: "address",
+            },
+          ],
+          name: "setETHRwandaHackerOnboardAtVersion",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_newFaucetWalletAddress",
+              type: "address",
+            },
+          ],
+          name: "setFaucetWalletAddress",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes4",
+              name: "interfaceId",
+              type: "bytes4",
+            },
+          ],
+          name: "supportsInterface",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_to",
+              type: "address",
+            },
+          ],
+          name: "withdraw",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          stateMutability: "payable",
+          type: "receive",
+        },
+      ],
+      inheritedFunctions: {
+        DEFAULT_ADMIN_ROLE:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        acceptDefaultAdminTransfer:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        beginDefaultAdminTransfer:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        cancelDefaultAdminTransfer:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        changeDefaultAdminDelay:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        defaultAdmin:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        defaultAdminDelay:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        defaultAdminDelayIncreaseWait:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        getRoleAdmin:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        grantRole:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        hasRole:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        owner:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        pendingDefaultAdmin:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        pendingDefaultAdminDelay:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        renounceRole:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        revokeRole:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        rollbackDefaultAdminDelay:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+        supportsInterface:
+          "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol",
+      },
+    },
+  },
 } as const;
 
 export default deployedContracts satisfies GenericContractsDeclaration;
