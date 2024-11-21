@@ -7,12 +7,12 @@ import { arbitrumSepolia, baseSepolia, sepolia } from "viem/chains";
 import { useAccount } from "wagmi";
 import { Address, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { CustomSelect } from "~~/components/ui/CustomSelect";
+import { FaucetInfo } from "~~/components/ui/FaucetInfo";
 import RemoveLockAddress from "~~/components/ui/RemoveLockAddress";
 import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import { useScreenSize } from "~~/hooks/scaffold-eth";
 import ethRwandaFaucet from "~~/public/faucet-image.png";
 import { notification } from "~~/utils/scaffold-eth";
-
 
 const Home: NextPage = () => {
   const { address: connectedAddress, isConnected } = useAccount();
@@ -21,7 +21,7 @@ const Home: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const screenSize = useScreenSize();
   const addressFormat = screenSize === "lg" ? "long" : "short";
-  
+
   const { data: ownerAddress, isLoading: isOwnerAddressLoading } = useScaffoldReadContract({
     contractName: "ETHRwandaCommunityFaucetManager",
     functionName: "owner",
@@ -85,6 +85,7 @@ const Home: NextPage = () => {
         @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap");
       `}</style>
       {/* <NFTDisplay /> */}
+        <FaucetInfo />
       <div className="w-full max-w-2xl bg-white/10 backdrop-blur-md border-none text-white rounded-lg shadow-xl p-8">
         <div className="text-center mb-8">
           <h1 className="flex flex-col lg:flex-row items-center justify-center gap-2 mb-2 lg:mr-6">
