@@ -4,7 +4,7 @@ import { useScreenSize } from "~~/hooks/scaffold-eth";
 
 export function FaucetInfo() {
   const screenSize = useScreenSize();
-  const infoMargin = screenSize === "lg" ? "-mt-20" : "mt-12";
+  const infoMargin = screenSize === "lg" ? "-mt-22" : "mt-12";
 
   return (
     <div
@@ -24,7 +24,7 @@ export function FaucetInfo() {
               </p>
               <p>
                 {/* Want to receive more ETH? <LevelInfoModal /> */}
-                Want to receive more ETH?
+                Want to receive more ETH? <span className="text-gray-100">Info coming soon...</span>
               </p>
             </div>
           </div>

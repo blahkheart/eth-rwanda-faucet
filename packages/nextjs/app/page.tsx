@@ -80,7 +80,7 @@ const Home: NextPage = () => {
   const isOwner = ownerAddress === connectedAddress;
 
   return (
-    <div className="min-h-screen bg-[#006D77] flex flex-col items-center justify-center p-4 font-['Montserrat',sans-serif]">
+    <div className="min-h-screen bg-[#006D77] flex flex-col items-center justify-center p-4 font-['Montserrat',sans-serif] pb-22">
       <style jsx global>{`
         @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap");
       `}</style>

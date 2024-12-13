@@ -81,8 +81,8 @@ export default function NFTDisplay() {
 
       {showInfo && (
         <div className="mb-6 p-4 bg-blue-50 rounded-md text-sm text-blue-800">
-          To access the faucet, you must own at least one of the following NFTs. These NFTs are awarded for attending
-          our developer workshops.
+          To access the faucet, you must own at least one of the following NFTs. These NFTs are awarded for being an
+          active community member, or attending our developer workshops and events.
         </div>
       )}
 
