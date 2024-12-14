@@ -11,7 +11,7 @@ import { Contract } from "ethers";
 const deployETHRwandaCommunityFaucetManager: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployer } = await hre.getNamedAccounts();
   const { deploy } = hre.deployments;
-  const dev = "0xd443188B33a13A24F63AC3A49d54DB97cf64349A";
+  const dev = "0xa0c03bE2Cf62f171e29e0d8766677cF4c50d58F8";
   const VERSION = 1;
   const ETH_RWANDA_HACKER_ONBOARD_ADDRESS = "0x6a36A9F5aDF57655E8806bE5675C8c3Be55F92cF";
   const FAUCET_ADDRESS = "0xd443188B33a13A24F63AC3A49d54DB97cf64349A";

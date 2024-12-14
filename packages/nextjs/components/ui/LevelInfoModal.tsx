@@ -1,7 +1,7 @@
 "use client";
 
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./Dialog";
 import { ScrollArea } from "./ScrollArea";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./dialog";
 
 const levelRequirements = [
   {
