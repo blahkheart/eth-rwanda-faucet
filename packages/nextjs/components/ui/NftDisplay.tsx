@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Contract, JsonRpcProvider } from "ethers";
 import { Info } from "lucide-react";
-import { baseSepolia } from "viem/chains";
+import { base } from "viem/chains";
+import { useAccount } from "wagmi";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
-// const unlockProviderBase = new JsonRpcProvider(`https://rpc.unlock-protocol.com/${base.id}`);
-const unlockProviderBaseSepolia = new JsonRpcProvider(`https://rpc.unlock-protocol.com/${baseSepolia.id}`);
+const unlockProviderBase = new JsonRpcProvider(`https://rpc.unlock-protocol.com/${base.id}`);
 type TicketData = {
   name: string;
   image: string;
@@ -14,12 +15,19 @@ type TicketData = {
 };
 
 export default function NFTDisplay() {
+  const { address: userAddress, isConnected } = useAccount();
   const [showInfo, setShowInfo] = useState(true);
   const [tickets, setTickets] = useState<TicketData[]>([]);
   const [isLoadingEvents, setIsLoadingEvents] = useState(false);
+  const [isLoadingMembership, setIsLoadingMembership] = useState(false);
+  const [isMember, setIsMember] = useState(false);
 
-  const contractAbi = ["function name() public view returns (string)"];
+  const contractAbi = [
+    "function name() public view returns (string)",
+    "function getHasValidKey(address _user) external view returns (bool)",
+  ];
   const baseUrl = "https://locksmith.unlock-protocol.com/lock";
+  const ethRwandaCommunityMembership = "0x53fd39d97a67917a0ef09bae965d2daa641fdd88";
 
   const { data: lockAddresses, isLoading: isLoadingLockAddresses } = useScaffoldReadContract({
     contractName: "ETHRwandaCommunityFaucetManager",
@@ -32,7 +40,7 @@ export default function NFTDisplay() {
         setIsLoadingEvents(true);
         try {
           const workshopsDataPromises = lockAddresses.map(async (address: string) => {
-            const eventContract = new Contract(address, contractAbi, unlockProviderBaseSepolia);
+            const eventContract = new Contract(address, contractAbi, unlockProviderBase);
             const name = await eventContract.name();
             return { name, image: `${baseUrl}/${address}/icon`, address };
           });
@@ -48,7 +56,25 @@ export default function NFTDisplay() {
     loadEvents();
   }, [lockAddresses]);
 
-  if (!isLoadingLockAddresses && !isLoadingEvents && tickets.length === 0) {
+  useEffect(() => {
+    if (isConnected && userAddress) {
+      setIsLoadingMembership(true);
+      const membershipStatus = async () => {
+        try {
+          const membershipContract = new Contract(ethRwandaCommunityMembership, contractAbi, unlockProviderBase);
+          const hasValidKey = await membershipContract.getHasValidKey(userAddress);
+          setIsMember(hasValidKey);
+        } catch (error) {
+          console.error("Failed to fetch membership status:", error);
+        } finally {
+          setIsLoadingMembership(false);
+        }
+      };
+      membershipStatus();
+    }
+  }, [isConnected, userAddress]);
+
+  if (!isLoadingLockAddresses && !isLoadingMembership && !isLoadingEvents && tickets.length === 0) {
     return (
       <div className="flex items-center justify-center -mt-64 text-white">
         <h1 className="text-2xl font-bold">No workshops found...</h1>
@@ -56,7 +82,7 @@ export default function NFTDisplay() {
     );
   }
 
-  if (isLoadingLockAddresses || isLoadingEvents) {
+  if (isLoadingLockAddresses || isLoadingEvents || isLoadingMembership) {
     return (
       <div className="flex justify-center -mt-64 text-white">
         <span className="loading loading-spinner loading-lg"></span>
@@ -92,8 +118,32 @@ export default function NFTDisplay() {
             key={nft.address}
             className="bg-gray-50 rounded-lg p-3 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg"
           >
-            <Image src={nft.image} alt={nft.name} width={100} height={100} className="w-full h-auto rounded-md mb-2" />
-            <p className="text-sm font-medium text-center text-gray-700 truncate">{nft.name}</p>
+            {isMember ? (
+              <>
+                <Image
+                  src={nft.image}
+                  alt={nft.name}
+                  width={100}
+                  height={100}
+                  className="w-full h-auto rounded-md mb-2"
+                />
+                <p className="text-sm font-medium text-center text-gray-700 truncate">{nft.name}</p>
+              </>
+            ) : (
+              <Link
+                target="_blank"
+                href="https://app.unlock-protocol.com/checkout?id=2e0a1a15-6f2c-4b69-be48-c6d453fe12ad"
+              >
+                <Image
+                  src={nft.image}
+                  alt={nft.name}
+                  width={150}
+                  height={100}
+                  className="w-full h-auto rounded-md mb-2"
+                />
+                <p className="text-sm font-medium text-center text-gray-700 truncate">{nft.name}</p>
+              </Link>
+            )}
           </div>
         ))}
       </div>
