@@ -54,6 +54,7 @@ export default function NFTDisplay() {
       }
     };
     loadEvents();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lockAddresses]);
 
   useEffect(() => {
@@ -72,6 +73,7 @@ export default function NFTDisplay() {
       };
       membershipStatus();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected, userAddress]);
 
   if (!isLoadingLockAddresses && !isLoadingMembership && !isLoadingEvents && tickets.length === 0) {
