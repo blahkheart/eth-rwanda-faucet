@@ -33,7 +33,7 @@ const config: HardhatUserConfig = {
       },
     ],
   },
-  defaultNetwork: "localhost",
+  defaultNetwork: "base",
   namedAccounts: {
     deployer: {
       // By default, it will take the first Hardhat account as the deployer
@@ -100,6 +100,12 @@ const config: HardhatUserConfig = {
     base: {
       url: "https://mainnet.base.org",
       accounts: [deployerPrivateKey],
+      verify: {
+        etherscan: {
+          apiUrl: "https://api.basescan.org/",
+          apiKey: etherscanApiKey,
+        },
+      },
     },
     baseSepolia: {
       url: "https://sepolia.base.org",
@@ -125,6 +131,16 @@ const config: HardhatUserConfig = {
   // configuration for harhdat-verify plugin
   etherscan: {
     apiKey: `${etherscanApiKey}`,
+    customChains: [
+      {
+        network: "base",
+        chainId: 8453, // Replace with the correct chain ID for Base if different
+        urls: {
+          apiURL: "https://api.basescan.org/",
+          browserURL: "https://basescan.org",
+        },
+      },
+    ],
   },
   // configuration for etherscan-verify from hardhat-deploy plugin
   verify: {
