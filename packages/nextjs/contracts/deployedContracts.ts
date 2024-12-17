@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   8453: {
     ETHRwandaCommunityFaucetManager: {
-      address: "0x5f41c714a2Bf4f8Fe1CF708fE1d6C2b051CB06f9",
+      address: "0x96443802a545F469f51CE83B61C6d3ad4e9DA8d8",
       abi: [
         {
           inputs: [
@@ -1002,6 +1002,24 @@ const deployedContracts = {
             },
           ],
           name: "setFaucetWalletAddress",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "_role",
+              type: "bytes32",
+            },
+            {
+              internalType: "bytes32",
+              name: "_adminRole",
+              type: "bytes32",
+            },
+          ],
+          name: "setRoleAdmin",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",
@@ -2140,7 +2158,7 @@ const deployedContracts = {
   },
   84532: {
     ETHRwandaCommunityFaucetManager: {
-      address: "0x024235436639d5e35bFeCe8b69cC8271122ab9b4",
+      address: "0x94eA0657B88746fD102573c6903233D7D81C3199",
       abi: [
         {
           inputs: [
@@ -3142,6 +3160,24 @@ const deployedContracts = {
         {
           inputs: [
             {
+              internalType: "bytes32",
+              name: "_role",
+              type: "bytes32",
+            },
+            {
+              internalType: "bytes32",
+              name: "_adminRole",
+              type: "bytes32",
+            },
+          ],
+          name: "setRoleAdmin",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
               internalType: "bytes4",
               name: "interfaceId",
               type: "bytes4",
@@ -3153,6 +3189,19 @@ const deployedContracts = {
               internalType: "bool",
               name: "",
               type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "totalRequests",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
             },
           ],
           stateMutability: "view",

@@ -1,10 +1,10 @@
 import { ethers } from "ethers";
 import { NextApiRequest, NextApiResponse } from "next";
-import { arbitrumSepolia, baseSepolia, sepolia } from "viem/chains";
+import { arbitrumSepolia, base, baseSepolia, sepolia } from "viem/chains";
 import deployedContracts from "~~/contracts/deployedContracts";
 import loadEnv from "~~/utils/scaffold-eth/helpers/loadEnv";
 
-const { privateKey, sepoliaRpcUrl, baseSepoliaRpcUrl, arbitrumSepoliaRpcUrl, levelOneAmount } = loadEnv();
+const { privateKey, sepoliaRpcUrl, baseRpcUrl, baseSepoliaRpcUrl, arbitrumSepoliaRpcUrl, levelOneAmount } = loadEnv();
 const lockAbi = ["function tokenOfOwnerByIndex(address,uint256) external view returns (uint256)"];
 const ethAmount = levelOneAmount;
 
@@ -19,11 +19,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: "Missing required fields" });
   }
 
-  const ethRwandaFaucetManagerAbi = (deployedContracts as any)[baseSepolia.id].ETHRwandaCommunityFaucetManager.abi;
-  const ethRwandaFaucetManagerAddress = (deployedContracts as any)[baseSepolia.id].ETHRwandaCommunityFaucetManager
-    .address;
+  const ethRwandaFaucetManagerAbi = (deployedContracts as any)[base.id].ETHRwandaCommunityFaucetManager.abi;
+  const ethRwandaFaucetManagerAddress = (deployedContracts as any)[base.id].ETHRwandaCommunityFaucetManager.address;
 
-  // Create a provider based on the networkId
+  // Create a provider for testnet ETH transferbased on the testnet networkId
   let providerUrl;
   switch (parseInt(networkId)) {
     case baseSepolia.id:
@@ -42,8 +41,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const provider = new ethers.JsonRpcProvider(providerUrl);
   const faucetWallet = new ethers.Wallet(privateKey, provider);
 
-  // Base provider for checks
-  const baseProvider = new ethers.JsonRpcProvider(baseSepoliaRpcUrl);
+  // Base chain provider for checks
+  const baseProvider = new ethers.JsonRpcProvider(baseRpcUrl);
   const baseWallet = new ethers.Wallet(privateKey, baseProvider);
   const faucetManagerContract = new ethers.Contract(
     ethRwandaFaucetManagerAddress,
@@ -65,6 +64,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (firstValidKeyLockAddress === ethers.ZeroAddress) {
       return res.status(400).json({ error: "You do not have a ticket to any workshop in the Gallery" });
     }
+
     const lockContract = new ethers.Contract(firstValidKeyLockAddress, lockAbi, baseProvider);
     const tokenId = await lockContract.tokenOfOwnerByIndex(userAddress, 0);
     const isTokenIdAbleToWithdraw = await faucetManagerContract.isTokenIdAbleToWithdraw(tokenId);
@@ -78,19 +78,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: "Faucet balance low, try again later or try another network" });
     }
 
+    // Record the withdrawal
     const recordWithdrawalTx = await faucetManagerContract.recordWithdrawal(userAddress, tokenId);
     const receipt = await recordWithdrawalTx.wait();
     if (receipt.status !== 1) {
       return res.status(400).json({ error: "Failed to record ETH request" });
     }
+
     // Transfer testnet ether to the address
     const tx = await faucetWallet.sendTransaction({
       to: userAddress,
       value: ethers.parseEther(`${ethAmount}`),
     });
     await tx.wait();
-
-    // Record the withdrawal
 
     res.status(200).json({
       message: `Successfully sent ${ethAmount} ETH to ${userAddress} with transaction hash: ${tx.hash}`,

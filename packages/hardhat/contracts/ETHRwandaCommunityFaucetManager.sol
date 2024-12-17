@@ -26,7 +26,7 @@ contract ETHRwandaCommunityFaucetManager is AccessControlDefaultAdminRules {
     uint256 public constant MAX_LOCKS = 10;
     address public immutable MANAGER;
     uint256 public COOL_DOWN = 24 hours;
-    uint256 public constant VERSION = 1; 
+    uint256 public constant VERSION = 2; 
     uint256 public totalRequests = 0;
 
     // Array of lock addresses
@@ -60,17 +60,17 @@ contract ETHRwandaCommunityFaucetManager is AccessControlDefaultAdminRules {
     }
 
     modifier onlyFaucetAdmin() {
-        if (!hasRole(getRoleAdmin(DEFAULT_ADMIN_ROLE), msg.sender)) revert NotFaucetAdmin();
+        if (!hasRole(DEFAULT_ADMIN_ROLE, msg.sender)) revert NotFaucetAdmin();
         _;
     }
 
     modifier onlyFaucetManager() {
-        if (!hasRole(getRoleAdmin(FAUCET_MANAGER_ROLE), msg.sender)) revert NotFaucetManager();
+        if (!hasRole(FAUCET_MANAGER_ROLE, msg.sender)) revert NotFaucetManager();
         _;
     }
 
     modifier onlyWithdrawalRecorder() {
-        if (!hasRole(getRoleAdmin(WITHDRAWAL_RECORDER_ROLE), msg.sender)) revert NotWithdrawalRecorder();
+        if (!hasRole(WITHDRAWAL_RECORDER_ROLE, msg.sender)) revert NotWithdrawalRecorder();
         _;
     }
     receive() external payable {}
@@ -239,6 +239,15 @@ contract ETHRwandaCommunityFaucetManager is AccessControlDefaultAdminRules {
         emit ETHRwWithdrawalRecorderRoleRevoked(account);
     }
 
+    /**
+     * @dev Sets the admin role for a specific role.
+     * Can only be called by addresses with the admin role.
+     * @param _role The role to set the admin for. 
+     * @param _adminRole The admin role to be set for the specified role.
+     */
+    function setRoleAdmin(bytes32 _role, bytes32 _adminRole) external {
+        _setRoleAdmin(_role, _adminRole);
+    }
     /**
      * @dev Gets the list of lock addresses.
      * @return An array of lock addresses.
