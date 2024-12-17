@@ -93,7 +93,7 @@ export default function NFTDisplay() {
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-6 bg-[#006D77] -mt-64">
+    <div className="w-full max-w-4xl mx-auto p-6 bg-[#006D77]">
       <div className="flex items-center justify-center mb-6 w-full">
         <h2 className="text-2xl font-bold text-gray-100 text-center flex justify-center">
           <span>Required Workshop NFTs</span>
@@ -129,7 +129,7 @@ export default function NFTDisplay() {
                   height={100}
                   className="w-full h-auto rounded-md mb-2"
                 />
-                <p className="text-sm font-medium text-center text-gray-700 truncate">{nft.name}</p>
+                <p className="text-sm font-semibold text-center text-gray-500">{nft.name}</p>
               </>
             ) : (
               <Link
@@ -143,7 +143,7 @@ export default function NFTDisplay() {
                   height={100}
                   className="w-full h-auto rounded-md mb-2"
                 />
-                <p className="text-sm font-medium text-center text-gray-700 truncate">{nft.name}</p>
+                <p className="text-sm font-semibold text-center text-gray-500">{nft.name}</p>
               </Link>
             )}
           </div>

@@ -1,6 +1,7 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
 :root,
 [data-theme] {
@@ -9,6 +10,7 @@
 
 body {
   min-height: 100vh;
+  font-family: "Montserrat", sans-serif;
 }
 
 h1,
