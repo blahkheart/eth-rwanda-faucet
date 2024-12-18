@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import { JoinCommunityModal } from "./JoinCommunityModal";
 import { Contract, JsonRpcProvider } from "ethers";
 import { Info } from "lucide-react";
 import { base } from "viem/chains";
@@ -14,6 +14,33 @@ type TicketData = {
   address: string;
 };
 
+const NFTImage = ({
+  image,
+  name,
+  address,
+  onImageClick,
+  isMember,
+}: {
+  image: string;
+  name: string;
+  address: string;
+  onImageClick: () => void;
+  isMember: boolean;
+}) => {
+  return (
+    <div
+      key={address}
+      className={`bg-gray-50 rounded-lg p-3 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg ${
+        !isMember ? "cursor-pointer" : ""
+      }`}
+      onClick={!isMember ? onImageClick : () => null}
+    >
+      <Image src={image} alt={name} width={150} height={100} className="w-full h-auto rounded-md mb-2" />
+      <p className="text-sm font-semibold text-center text-gray-500">{name}</p>
+    </div>
+  );
+};
+
 export default function NFTDisplay() {
   const { address: userAddress, isConnected } = useAccount();
   const [showInfo, setShowInfo] = useState(true);
@@ -21,6 +48,7 @@ export default function NFTDisplay() {
   const [isLoadingEvents, setIsLoadingEvents] = useState(false);
   const [isLoadingMembership, setIsLoadingMembership] = useState(false);
   const [isMember, setIsMember] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const contractAbi = [
     "function name() public view returns (string)",
@@ -91,6 +119,9 @@ export default function NFTDisplay() {
       </div>
     );
   }
+  const handleImageClick = () => {
+    setIsModalOpen(true);
+  };
 
   return (
     <div className="w-full max-w-4xl mx-auto p-6 bg-[#006D77]">
@@ -116,39 +147,30 @@ export default function NFTDisplay() {
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {tickets.map(nft => (
-          <div
-            key={nft.address}
-            className="bg-gray-50 rounded-lg p-3 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg"
-          >
+          <>
             {isMember ? (
-              <>
-                <Image
-                  src={nft.image}
-                  alt={nft.name}
-                  width={100}
-                  height={100}
-                  className="w-full h-auto rounded-md mb-2"
-                />
-                <p className="text-sm font-semibold text-center text-gray-500">{nft.name}</p>
-              </>
+              <NFTImage
+                key={nft.address}
+                name={nft.name}
+                image={nft.image}
+                address={nft.address}
+                isMember={isMember}
+                onImageClick={handleImageClick}
+              />
             ) : (
-              <Link
-                target="_blank"
-                href="https://app.unlock-protocol.com/checkout?id=2e0a1a15-6f2c-4b69-be48-c6d453fe12ad"
-              >
-                <Image
-                  src={nft.image}
-                  alt={nft.name}
-                  width={150}
-                  height={100}
-                  className="w-full h-auto rounded-md mb-2"
-                />
-                <p className="text-sm font-semibold text-center text-gray-500">{nft.name}</p>
-              </Link>
+              <NFTImage
+                key={nft.address}
+                name={nft.name}
+                image={nft.image}
+                address={nft.address}
+                isMember={isMember}
+                onImageClick={handleImageClick}
+              />
             )}
-          </div>
+          </>
         ))}
       </div>
+      {isModalOpen && <JoinCommunityModal setIsModalOpen={setIsModalOpen} />}
     </div>
   );
 }
