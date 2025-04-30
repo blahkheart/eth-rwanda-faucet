@@ -78,27 +78,65 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: "Faucet balance low, try again later or try another network" });
     }
 
-    // Record the withdrawal
-    const recordWithdrawalTx = await faucetManagerContract.recordWithdrawal(userAddress, tokenId);
-    const receipt = await recordWithdrawalTx.wait();
-    if (receipt.status !== 1) {
-      return res.status(400).json({ error: "Failed to record ETH request" });
+    // Transfer testnet ether to the address
+    let tx;
+    try {
+      tx = await faucetWallet.sendTransaction({
+        to: userAddress,
+        value: ethers.parseEther(`${ethAmount}`),
+      });
+      const transferReceipt = await tx.wait(); // Wait for confirmation
+
+      // Ensure the transaction succeeded on-chain
+      if (transferReceipt?.status !== 1) {
+        console.error("ETH transfer transaction failed after waiting:", transferReceipt);
+        return res.status(500).json({ error: "Failed to send ETH. The transaction was reverted." });
+      }
+    } catch (transferError: any) {
+      console.error("Error sending ETH:", transferError);
+      return res.status(500).json({ error: `Failed to send ETH: ${transferError.reason || transferError.message}` });
     }
 
-    // Transfer testnet ether to the address
-    const tx = await faucetWallet.sendTransaction({
-      to: userAddress,
-      value: ethers.parseEther(`${ethAmount}`),
-    });
-    await tx.wait();
+    // Record the withdrawal
+    try {
+      const recordWithdrawalTx = await faucetManagerContract.recordWithdrawal(userAddress, tokenId);
+      const recordReceipt = await recordWithdrawalTx.wait();
 
-    res.status(200).json({
-      message: `Successfully sent ${ethAmount} ETH to ${userAddress} with transaction hash: ${tx.hash}`,
-      transactionHash: tx.hash,
-      success: true,
-    });
-  } catch (error) {
-    console.error("Error processing request:", error);
-    res.status(500).json({ error: "Internal server error" });
+      if (recordReceipt.status !== 1) {
+        // Log issue: User got ETH, but recording failed. Needs manual check.
+        console.error(
+          `CRITICAL: Failed to record withdrawal for ${userAddress} (Token ID: ${tokenId}) after successful ETH transfer (${tx.hash}). Manual reconciliation needed.`,
+        );
+        // Recording failed, but the user received funds, so report success on the transfer.
+        return res.status(200).json({
+          message: `Successfully sent ${ethAmount} ETH to ${userAddress}.`,
+          transactionHash: tx.hash,
+          success: true,
+        });
+      }
+
+      // Both transfer and recording succeeded
+      res.status(200).json({
+        message: `Successfully sent ${ethAmount} ETH to ${userAddress}.\nTransaction hash: ${tx.hash}`,
+        transactionHash: tx.hash,
+        success: true,
+      });
+    } catch (recordError: any) {
+      // Handle errors during withdrawal recording specifically
+      console.error(
+        `CRITICAL: Error recording withdrawal for ${userAddress} (Token ID: ${tokenId}) after successful ETH transfer (${tx.hash}):`,
+        recordError,
+      );
+      return res.status(200).json({
+        message: `Successfully sent ${ethAmount} ETH to ${userAddress}.`,
+        transactionHash: tx.hash,
+        success: true,
+      });
+    }
+  } catch (error: any) {
+    // Catch errors from initial checks (before transfer attempt)
+    console.error("Error processing request (initial checks):", error);
+    if (res.headersSent) return;
+    res.status(500).json({ error: "Internal server error during initial checks." });
   }
 }

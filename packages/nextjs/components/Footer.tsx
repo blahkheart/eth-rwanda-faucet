@@ -62,7 +62,7 @@ export const Footer = () => {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  ETH Rwanda Hackathons Ltd
+                  ETH Rwanda Community
                 </a>
               </p>
             </div>
