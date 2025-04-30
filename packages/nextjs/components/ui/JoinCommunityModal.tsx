@@ -19,7 +19,7 @@ export function JoinCommunityModal({ setIsModalOpen }: Props) {
             >
               ✕
             </label>
-            <div className="prose prose-lg font-sans">
+            <div className="prose prose-lg font-sans text-black">
               <h1 className="text-center font-bold text-2xl">Welcome to ETH Rwanda 🌍</h1>
               <p>
                 We are a <strong>decentralized community</strong> of blockchain enthusiasts, developers, and innovators
