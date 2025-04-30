@@ -1,4 +1,5 @@
 // import { LevelInfoModal } from "./LevelInfoModal";
+import Link from "next/link";
 import { AlertCircle } from "lucide-react";
 import { useScreenSize } from "~~/hooks/scaffold-eth";
 
@@ -19,8 +20,11 @@ export function FaucetInfo() {
             <h2 className="text-lg font-semibold text-teal-200">Faucet Access Requirements</h2>
             <div className="space-y-2 text-teal-100/90">
               <p>
-                To use the faucet, you must own at least one NFT from our Events Gallery. At Level 1, you can access
-                0.01 ETH every 24 hours.
+                To use the faucet, you must own at least one NFT from our{" "}
+                <Link href="/gallery" className="text-blue-300 hover:underline">
+                  Events Gallery
+                </Link>
+                . At Level 1, you can access 0.01 ETH every 24 hours.
               </p>
               <p>
                 {/* Want to receive more ETH? <LevelInfoModal /> */}
